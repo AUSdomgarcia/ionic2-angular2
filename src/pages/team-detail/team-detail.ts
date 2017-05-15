@@ -1,9 +1,10 @@
 import { GamePage } from '../game/game';
 import { EliteApi } from '../../shared/shared';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { AlertController, IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 /**
  * Generated class for the TeamDetailPage page.
@@ -22,10 +23,19 @@ export class TeamDetailPage {
   team: any;
   games: any[];
   private tourneyData: any;
+  teamStanding: any;
+  allGames: any[];
+  isFollowing: Boolean = false;
+
+  dateFilter: string;
+
+  useDateFilter: Boolean = false;
   
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
-              private eliteApi: EliteApi) {}
+              private eliteApi: EliteApi,
+              private alertController: AlertController,
+              private toastController: ToastController) {}
   
   ionViewDidLoad() {
     this.team = this.navParams.data;
@@ -48,6 +58,9 @@ export class TeamDetailPage {
                       };
                   })
                   .value();
+
+      this.allGames = this.games;
+      this.teamStanding = _.find(this.tourneyData.standings, { 'teamId': this.team.id });
   }
 
   getScoreDisplay(isTeam1, team1Score, team2Score) {
@@ -65,12 +78,71 @@ export class TeamDetailPage {
   gameClicked(event, game){
     let sourceGame = this.tourneyData.games.find(g => g.id === game.gameId);
     this.navCtrl.parent.parent.push(GamePage, sourceGame);
-    // console.log(sourceGame);
+    // le.log(sourceGame);
+  }
+
+  dateChanged(){
+      // let that = this;
+      // this.games = _.filter(this.allGames, function(g){
+          // return moment(g.time).isSame(that.dateFilter, 'day')
+      // });
+
+    if(this.useDateFilter){
+        this.games = _.filter(this.allGames, g => moment(g.time)
+            .isSame(this.dateFilter, 'day'));
+    } else {
+      this.games = this.allGames;
+    }
   }
   
   goHome(){
     // this.navCtrl.push(MyTeamsPage);
     // this.navCtrl.popToRoot();
     this.navCtrl.parent.parent.popToRoot();
+  }
+
+  getScoreWorL(game){
+    // console.log(game);
+    return game.scoreDisplay ? game.scoreDisplay[0] : '';
+  }
+
+  getScoreDisplayBadgeClass(game){
+    return game.scoreDisplay.indexOf('W:') === 0 ? 'primary':'danger';
+  }
+
+  toggleFollow(){
+    if(this.isFollowing){
+      let confirm = this.alertController.create({
+        title: 'Unfollow',
+        message: 'Are you sure you want to unfollow this team?',
+        buttons: [
+          {
+            text: 'Yes',
+            handler: () => { 
+              this.isFollowing = false 
+              // TODO: Persist data here  
+              
+              let toast = this.toastController.create({
+                message: 'You have unfollowed this team.',
+                duration: 2000,
+                position: 'bottom'
+              });
+              
+              toast.present();
+            }
+          },
+          {
+            text: 'No'
+          }
+        ]
+      });
+
+      confirm.present();
+
+    } else {
+      this.isFollowing = true;
+      // TODO: Persist logic 
+    }
+
   }
 }

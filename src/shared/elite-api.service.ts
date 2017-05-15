@@ -7,7 +7,8 @@ import { Observable } from 'rxjs/Observable';
 @Injectable()
 
 export class EliteApi {
-    private baseUrl = 'https://elite-schedule-app-i2-64179.firebaseio.com';
+    // private baseUrl = 'https://elite-schedule-app-i2-64179.firebaseio.com';
+    private baseUrl = 'https://elite-schedule-api-i2.firebaseio.com';
     currentTourney: any = {};
 
     constructor(private http: Http) { }
@@ -21,11 +22,11 @@ export class EliteApi {
 
     getTournamentData(tourneyId) : Observable<any> {
         return this.http.get(`${this.baseUrl}/tournaments-data/${tourneyId}.json`)
-            // .map((response: Response) => {
-            //     this.currentTourney = response.json();
-            //     return this.currentTourney;
-            // });
-            .map( res => this.currentTourney = res.json() );
+            .map((response: Response) => {
+                this.currentTourney = response.json();
+                return this.currentTourney;
+            });
+            // .map( res => this.currentTourney = res.json() );
     }
 
     getCurrentTourney(){

@@ -1,36 +1,48 @@
 <ion-header>
 
-    <ion-navbar class="primary">
+    <ion-navbar color="primary">
         <button ion-button menuToggle icon-only>
             <ion-icon name="menu"></ion-icon>
         </button>
         <ion-title>Elite Schedule</ion-title>
     </ion-navbar>
 
-    <ion-toolbar secondary>
+    <ion-toolbar color="secondary">
         <ion-title>My Teams</ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-    <!--<p>You are not currently following any tournaments</p>
-    <p>First select a tournament, then you can follow teams for their team page.</p>-->
-
-    <ion-list-header>Followed Teams</ion-list-header>
-
-    <ion-list>
-        <button ion-item *ngFor="let item of favorites">
-            <ion-icon name="star"></ion-icon>
-            {{item.team.name}}
-            <p>
-                <small>{{item.tournamentName}}</small>
-            </p>
-        </button>
-    </ion-list>
-
-
-    <p>To follow more teams, select a tournament then you can follow teams from their team page.</p>
+<ion-content>
+    <ion-card *ngIf="!favorites">
+        <ion-card-header class="my-teams-header">No Followed Teams</ion-card-header>
+        <ion-card-content>
+            <p>You are not currently following any tournaments</p>
+            <p>First select a tournament, then you can follow teams for their team page.</p>
+            <button full ion-button 
+                (click)="toToTournaments()">
+                <ion-icon name="search"></ion-icon>Find a Tournaments
+            </button>
+        </ion-card-content>
+    </ion-card>
     
-    
-    <button ion-button (click)="toToTournaments()">Find a Tournaments</button>
+    <ion-card *ngIf="favorites">
+        <ion-list>
+            <ion-list-header class="my-teams-header">Followed Teams</ion-list-header>
+            <button ion-item *ngFor="let item of favorites"
+                (click)="favoriteTapped($event, item)">
+                <ion-icon name ="star"></ion-icon>
+                {{item.team.name}}
+                <p><small>{{item.tournamentName}}</small></p>
+            </button>
+        </ion-list>
+        
+        <ion-card-content>
+            <p>To follow more teams, select a tournament then you can follow teams from their team page.</p>
+            <button full ion-button 
+                (click)="toToTournaments()">
+                <ion-icon name="search"></ion-icon>Find a Tournaments
+            </button>   
+        </ion-card-content>
+    </ion-card>
+
 </ion-content>

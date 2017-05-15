@@ -6,7 +6,7 @@
 -->
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>{{team.name}}</ion-title>
     
     <ion-buttons end>
@@ -26,7 +26,7 @@
     [rootParams]="team">
   </ion-tab>
   
-  <ion-tab tabTitle="Stadings" 
+  <ion-tab tabTitle="Standings" 
     [root]="standingsTab" 
     tabIcon="podium"
     [rootParams]="team">

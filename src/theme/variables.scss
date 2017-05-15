@@ -77,6 +77,4 @@ $colors: (
 @import "roboto";
 @import "noto-sans";
 
-.primary {
-  // background-color: deepskyblue;
-}
+@import '../pages/my-teams/my-teams.scss';

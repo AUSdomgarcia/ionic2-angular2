@@ -40,7 +40,12 @@ import { IonicStorageModule } from '@ionic/storage';
     BrowserModule,
     HttpModule,
     IonicModule.forRoot(MyApp),
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot(
+      {
+        name: '__mydb',
+        driverOrder: ['indexeddb', 'sqlite', 'websql']
+      }
+    )
   ],
   bootstrap: [IonicApp],
   entryComponents: [

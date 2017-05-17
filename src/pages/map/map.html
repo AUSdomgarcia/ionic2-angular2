@@ -14,6 +14,12 @@
 
 
 <ion-content padding>
+
+  <ion-fab left bottom class="fab-map">
+    <button ion-fab (click)="getDirections()">
+      <ion-icon name="navigate"></ion-icon>
+    </button>
+  </ion-fab>
   
   <div #map id="map" style="height:100%;"></div>
 

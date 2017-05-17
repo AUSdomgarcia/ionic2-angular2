@@ -2,6 +2,7 @@ import { EliteApi } from '../../shared/shared';
 import { Component } from '@angular/core';
 import { AlertController, IonicPage, NavController, NavParams } from 'ionic-angular';
 
+declare var window: any;
 /**
  * Generated class for the MapPage page.
  *
@@ -105,6 +106,10 @@ export class MapPage {
         ]
       });
       confirm.present();
+  }
+  
+  getDirections(){
+    window.location = `geo:14.5840,121.0633;u=35`;
   }
     
     // let map: GoogleMap = this.googleMaps.create(element);

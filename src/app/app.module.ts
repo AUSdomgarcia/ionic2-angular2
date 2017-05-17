@@ -1,4 +1,5 @@
 import { GamePage } from '../pages/game/game';
+import { MapPage } from '../pages/map/map';
 import { HttpModule } from '@angular/http';
 import { MyTeamsPage } from '../pages/my-teams/my-teams.page';
 import { TeamsPage } from '../pages/teams/teams';
@@ -23,6 +24,8 @@ import { EliteApi, UserSettings } from '../shared/shared';
 
 import { IonicStorageModule } from '@ionic/storage';
 
+import { GoogleMaps } from '@ionic-native/google-maps';
+
 @NgModule({
   declarations: [
     MyApp,
@@ -34,7 +37,8 @@ import { IonicStorageModule } from '@ionic/storage';
     TeamDetailPage,
     StandingsPage,
     TeamHomePage,
-    GamePage
+    GamePage,
+    MapPage
   ],
   imports: [
     BrowserModule,
@@ -58,13 +62,15 @@ import { IonicStorageModule } from '@ionic/storage';
     TeamDetailPage,
     StandingsPage,
     TeamHomePage,
-    GamePage
+    GamePage,
+    MapPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     EliteApi,
     UserSettings,
+    GoogleMaps,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

@@ -6,18 +6,31 @@
 -->
 <ion-header>
   <ion-navbar color="primary"></ion-navbar>
+
+  <ion-toolbar>
+    <ion-segment color="secondary" 
+      [(ngModel)]="divisionFilter"
+      (ionChange)="filterDivision($event)">
+
+      <ion-segment-button value="division">Division</ion-segment-button>
+      <ion-segment-button value="all">All</ion-segment-button>
+
+    </ion-segment>
+  </ion-toolbar>
+
 </ion-header>
 
 <ion-content padding>
-  <ion-list>
-    
-    <ion-item-group *ngFor="let division of allStandings">
-      
-      <ion-item-divider color="secondary">
-        {{division.divisionName}}
-      </ion-item-divider>
 
-      <ion-item *ngFor="let team of division.divisionStandings">
+  <ion-list [virtualScroll]="standings" 
+            [approxItemHeight]="'132px'" 
+            [headerFn]="getHeader">
+
+    <ion-item-divider color="secondary" *virtualHeader="let header">
+        {{header}}
+    </ion-item-divider>
+
+    <ion-item *virtualItem="let team">
 
         <ion-row>
           <ion-col>
@@ -71,9 +84,15 @@
           </ion-col>
         </ion-row>
 
-      </ion-item>
-
-    </ion-item-group>
-  
+    </ion-item>
   </ion-list>
+
+  <!--<ion-list>
+    <ion-item-group *ngFor="let division of allStandings">
+        <ion-item *ngFor="let team of division.divisionStandings">
+
+        </ion-item>
+    </ion-item-group>
+  </ion-list>-->
+
 </ion-content>

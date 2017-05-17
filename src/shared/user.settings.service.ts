@@ -1,28 +1,35 @@
+import { Events } from 'ionic-angular';
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
-import * as _ from 'lodash';
+
 
 @Injectable()
 
 export class UserSettings {
 
-    constructor(private storage: Storage) {}
+    constructor(private storage: Storage,
+                private events: Events) {}
 
     favoriteTeam(team, tournamentId, tournamentName){
         let item = {
             team, tournamentId, tournamentName
         };
-        this.storage.set(team.id, JSON.stringify(item));
+        
+        this.storage.set(team.id, JSON.stringify(item))
+            .then( ()=> this.events.publish('favorites:changed') );
     }
+
     unfavoriteTeam(team){
-        this.storage.remove(team.id);
+        this.storage.remove(team.id)
+            .then( () => this.events.publish('favorites:changed') );
     }
     
     isFavoriteTeam(teamId){
-        console.log('isSetToFavorite', typeof teamId, teamId);
+        // console.log('isSetToFavorite', typeof teamId, teamId);
         let bool = true;
-
-        return this.storage.get(teamId)
+        
+        return this.storage
+            .get(teamId)
             .then(value => value ? bool : !bool);
     }
 

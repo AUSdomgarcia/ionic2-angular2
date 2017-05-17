@@ -62,7 +62,6 @@ $colors: (
 
 @import "ionic.theme.default";
 
-
 // Ionicons
 // --------------------------------------------------
 // The premium icon font for Ionic. For more info, please see:
@@ -78,3 +77,4 @@ $colors: (
 @import "noto-sans";
 
 @import '../pages/my-teams/my-teams.scss';
+@import '../pages/game/game.scss';

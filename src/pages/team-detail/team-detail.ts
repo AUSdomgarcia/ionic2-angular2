@@ -158,6 +158,14 @@ export class TeamDetailPage {
                   this.tourneyData.tournament.id,
                   this.tourneyData.name);
     }
+  }
 
+  refreshAll(refresher){
+
+    this.eliteApi.refreshCurrentTourney()
+      .subscribe( () => {
+        refresher.complete();
+        this.ionViewDidLoad();
+      });
   }
 }

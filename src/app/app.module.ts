@@ -26,6 +26,9 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { GoogleMaps } from '@ionic-native/google-maps';
 
+import { SQLite } from '@ionic-native/sqlite';
+
+
 @NgModule({
   declarations: [
     MyApp,
@@ -40,17 +43,19 @@ import { GoogleMaps } from '@ionic-native/google-maps';
     GamePage,
     MapPage
   ],
+
   imports: [
     BrowserModule,
     HttpModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot(
       {
-        name: '__mydb',
+        name: 'eliteApp',
         driverOrder: ['indexeddb', 'sqlite', 'websql']
       }
     )
   ],
+
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
@@ -65,12 +70,14 @@ import { GoogleMaps } from '@ionic-native/google-maps';
     GamePage,
     MapPage
   ],
+  
   providers: [
     StatusBar,
     SplashScreen,
     EliteApi,
     UserSettings,
     GoogleMaps,
+    SQLite,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

@@ -1,5 +1,4 @@
 import { TeamHomePage } from '../pages/team-home/team-home';
-import { UserSettings } from '../shared/user.settings.service';
 import { TournamentsPage } from '../pages/tournaments/tournaments';
 import { MyTeamsPage } from '../pages/my-teams/my-teams.page';
 import { Component, ViewChild } from '@angular/core';
@@ -10,7 +9,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 // import { HomePage } from '../pages/home/home';
 // import { ListPage } from '../pages/list/list';
 
-import { EliteApi } from '../shared/shared';
+import { EliteApi, UserSettings } from '../shared/shared';
 
 @Component({
   templateUrl: 'app.html'
@@ -45,6 +44,8 @@ export class MyApp {
       this.events
           .subscribe('favorites:changed', () => this.refreshFavorites() );
 
+      this.userSettings.createSQLite();
+      
       this.splashScreen.hide(); 
     });
   }

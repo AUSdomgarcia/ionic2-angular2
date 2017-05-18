@@ -1,7 +1,7 @@
 import { UserSettings } from '../../shared/user.settings.service';
 import { TeamHomePage } from '../team-home/team-home';
 import { EliteApi } from '../../shared/shared';
-import { LoadingController, NavController } from 'ionic-angular';
+import { LoadingController, NavController, Platform } from 'ionic-angular';
 import { Component } from '@angular/core';
 import { TournamentsPage } from '../tournaments/tournaments';
 
@@ -16,7 +16,8 @@ export class MyTeamsPage {
     constructor(private nav: NavController,
                 private loadingController: LoadingController,
                 private eliteApi: EliteApi,
-                private userSettings: UserSettings) { }
+                private userSettings: UserSettings,
+                private platform: Platform) { }
                 
     gotoTournaments(){
         this.nav.push(TournamentsPage);

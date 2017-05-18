@@ -5,7 +5,6 @@
     supports multiple navigation stack
     base on ui-router component
     deep-linking
-     
 
 2. page skeleton
     

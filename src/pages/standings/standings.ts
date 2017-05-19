@@ -50,7 +50,15 @@ export class StandingsPage {
     //   .map(item => _.zipObject(['divisionName','divisionStandings'], item))
     //   .value();
 
-    // console.log('standings:', this.standings);
+    let pairs = 
+      _.chain(this.standings)
+      .groupBy('division')
+      .toPairs()
+      .map(item => _.zipObject(['divisionName','divisionStandings'], item))
+      .value();
+    
+    console.log(pairs);
+
     // console.log('divsion standings:', this.allStandings);
 
     this.filterDivision();

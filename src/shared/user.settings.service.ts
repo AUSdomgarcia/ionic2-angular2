@@ -1,90 +1,171 @@
 import { Events } from 'ionic-angular';
 import { Injectable } from '@angular/core';
-
-import { Storage } from '@ionic/storage';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 
 @Injectable()
 
 export class UserSettings {
 
-    constructor(private storage: Storage,
-                private events: Events,
+    constructor(private events: Events,
                 private sqlite: SQLite) {}
     
     createSQLite(){
-        console.log('sqlite', this.sqlite);
-
         this.sqlite.create({
             name: 'eliteApp.db',
             location: 'default'
         })
         .then( (db: SQLiteObject) => {
             db.executeSql(
-                    `create table team (
+                    `CREATE TABLE IF NOT EXISTS team (
                      coach text NOT NULL,
                      division text NOT NULL,
                      id integer NOT NULL,
                      name text NOT NULL,
                      tournamentId text NOT NULL
-                    )`, {})
-                    .then(() => console.log('Executed Sql'))
-                    .catch( (e) => console.log(e) );
-        });
+                    )`, [])
+                    .then(() => alert('executed sql successfully') )
+                    .catch( (e) => alert('CREATE_ERROR ' + JSON.stringify(e)) );
+        })
+        .catch( (e)=> { alert('DB_CONN_ERROR ' + e) });
     }
 
-    // {"team":{
-    // "coach":"Bartlett",
-    // "division":"6th grade",
-    // "id":814,
-    // "name":"DC Assault"},
-    // "tournamentId":"3dd50aaf-6b03-4497-b074-d81703f07ee8"}
+    truncateDB(){
+        this.sqlite.create({
+            name: 'eliteApp.db',
+            location: 'default'
+        })
+        .then( (db: SQLiteObject) => {
+            db.executeSql(`DELETE FROM team`, [])
+            .then(() => {
+                alert('truncate sql successfully') ;
+                this.events.publish('favorites:changed');
+            })
+            .catch( (e) => alert('TRUNC_ERROR ' + JSON.stringify(e)) );
+        })
+        .catch( (e)=> { alert('DB_CONN_ERROR ' + e) });
+    }
 
     favoriteTeam(team, tournamentId, tournamentName){
         let item = {
             team, tournamentId, tournamentName
         };
         
-        console.log('add:', JSON.stringify(item));
+        // DELETE:
+        // this.storage.set(team.id, JSON.stringify(item))
+            // .then( ()=> this.events.publish('favorites:changed') );
 
-        this.storage.set(team.id, JSON.stringify(item))
-            .then( ()=> this.events.publish('favorites:changed') );
+        this.sqlite.create({
+            name: 'eliteApp.db',
+            location: 'default'
+        })
+        .then( (db: SQLiteObject) => {
+            db.executeSql(`INSERT INTO team
+                VALUES(?,?,?,?,?) 
+            `, [
+                item['team']['coach'],
+                item['team']['division'],
+                item['team']['id'],
+                item['team']['name'],
+                tournamentId
+            ])
+            .then( () => {
+                this.events.publish('favorites:changed');
+            } )
+            .catch((e) => {
+                alert('INSERT_ERROR ' + JSON.stringify(e));
+            })
+        })
+        .catch((e) => {
+            alert('DB_CONN_ERROR ' + JSON.stringify(e));
+        });
     }
 
     unfavoriteTeam(team){
-        console.log('remove:', team.id);
+        // console.log('remove:', team.id);
+        // DELETE:
+        // this.storage.remove(team.id)
+        // .then( () => this.events.publish('favorites:changed') );
 
-        this.storage.remove(team.id)
-            .then( () => this.events.publish('favorites:changed') );
+        let teamId = team.id;
+
+        this.sqlite.create({
+            name: 'eliteApp.db',
+            location: 'default'
+        })
+        .then( (db: SQLiteObject) => {
+            db.executeSql(`
+                DELETE FROM team 
+                WHERE id = ${teamId}`, [])
+            .then( () => {
+                this.events.publish('favorites:changed');
+            })
+            .catch((e) => {
+                alert('DELETE_ERROR ' + JSON.stringify(e));
+            })
+        })
+        .catch((e) => {
+            alert('DB_CONN_ERROR ' + JSON.stringify(e));
+        });
+
     }
     
-    isFavoriteTeam(teamId){
-        // console.log('isSetToFavorite', typeof teamId, teamId);
-        let bool = true;
-        
-        return this.storage
-            .get(teamId)
-            .then(value => value ? bool : !bool);
+    isFavoriteTeam(teamId) {
+        let bool = false;
+        return new Promise((resolve, reject) => {
+            this.sqlite.create({
+                name: 'eliteApp.db',
+                location: 'default'
+            })
+            .then((db: SQLiteObject) => {
+                db.executeSql(`SELECT * FROM team WHERE id = ${teamId}`, [])
+                .then( (resultSet) => {
+                    alert('id: ' + `${teamId}` 
+                        + ' ' + resultSet.rows.length + ' ' 
+                        + JSON.stringify(resultSet) );
+                    
+                    bool = (resultSet.rows.length !== 0) ? true : false;
+                    resolve(bool);
+                })
+                .catch( (e) => {
+                    alert('SELECT_ERROR ' + e);
+                    reject(new Error(e));
+                });
+            })
+            .catch( (e) => {
+                alert('DB_CONN_ERROR ' + e);
+                reject(new Error(e));
+            });
+        })
     }
 
     getAllFavorites(){
         let collections = [];
-        
-        this.storage.keys().then( items => {
-            
-            let promises = items.map( item => {
-                return this.storage.get(item);
-            });
-            
-            Promise.all(promises).then(function(teams) {
-                teams.map(function(team){
-                    collections.push(JSON.parse(team));
-                });
-            });
+
+        this.sqlite.create({
+            name: 'eliteApp.db',
+            location: 'default'
         })
-        .catch(function(err) {
-            if(err) throw err;
-        });
+        .then((db: SQLiteObject) => {
+            
+            db.executeSql(`SELECT * FROM team`, [])
+
+            .then( (resultSet) => {
+
+                for(let i = 0; i < resultSet.rows.length; i++){
+                    collections.push({
+                        team: {
+                            coach: resultSet.rows.item(i).coach,
+                            division: resultSet.rows.item(i).division,
+                            id: resultSet.rows.item(i).id,
+                            name: resultSet.rows.item(i).name
+                        },
+                        tournamentId: resultSet.rows.item(i).tournamentId
+                    });
+                }
+            })
+            .catch( (e) => alert('SELECT_ERROR ' + e) );
+        })
+        .catch( (e) => alert('DB_CONN_ERROR ' + e) );
 
         return Promise.resolve(collections);
     }

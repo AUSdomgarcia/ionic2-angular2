@@ -60,16 +60,14 @@ export class TeamDetailPage {
                       };
                   })
                   .value();
-
+      
       this.allGames = this.games;
       this.teamStanding = _.find(this.tourneyData.standings, { 'teamId': this.team.id });
       
-      if(this.team){
-        this.userSettings.isFavoriteTeam(this.team.id)
-          .then( value => { 
-            return this.isFollowing = value;
-          });
-      }
+      this.userSettings.isFavoriteTeam(this.team.id)
+        .then( (value) => { 
+          this.isFollowing = value as Boolean;
+        });
   }
 
   getScoreDisplay(isTeam1, team1Score, team2Score) {
@@ -117,6 +115,10 @@ export class TeamDetailPage {
 
   getScoreDisplayBadgeClass(game){
     return game.scoreDisplay.indexOf('W:') === 0 ? 'primary':'danger';
+  }
+
+  toggleClear(){
+    this.userSettings.truncateDB();
   }
 
   toggleFollow(){

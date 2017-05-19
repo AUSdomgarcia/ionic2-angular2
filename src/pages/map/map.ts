@@ -1,6 +1,6 @@
 import { EliteApi } from '../../shared/shared';
 import { Component } from '@angular/core';
-import { AlertController, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { AlertController, IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 
 declare var window: any;
 /**
@@ -18,7 +18,8 @@ import {
     CameraPosition,
     MarkerOptions,
     Marker
-    } from '@ionic-native/google-maps';
+  } from '@ionic-native/google-maps';
+  
 
 @IonicPage()
 
@@ -37,7 +38,8 @@ export class MapPage {
               public navParams: NavParams,
               private googleMaps: GoogleMaps,
               private eliteApi: EliteApi,
-              private alertController:AlertController) {}
+              private alertController:AlertController,
+              private platform: Platform) {}
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MapPage');
@@ -46,6 +48,8 @@ export class MapPage {
     let tourneyData = this.eliteApi.getCurrentTourney();
     let location = tourneyData.locations[games.locationId];
 
+    if( ! this.platform) return false;
+    
     this.map = {
       lat: location.latitude,
       lng: location.longitute,

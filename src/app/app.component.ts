@@ -42,15 +42,22 @@ export class MyApp {
       this.refreshFavorites();
 
       this.events
-          .subscribe('favorites:changed', () => this.refreshFavorites() );
-
-      this.userSettings.createSQLite();
+          .subscribe('favorites:changed', 
+          () => this.refreshFavorites() );
+      
+      if(this.platform.is('cordova')){
+        this.userSettings.createSQLite();
+        
+      } else {
+        alert('not native!');
+      }
       
       this.splashScreen.hide(); 
     });
   }
 
   refreshFavorites(){
+    // TODO: 
     this.userSettings.getAllFavorites()
         .then( favoriteTeams => {
           this.favoriteTeams = favoriteTeams;

@@ -30,11 +30,13 @@ export class MyTeamsPage {
         });
         
         loader.present();
+
         this.eliteApi.getTournamentData(favorite.tournamentId)
             .subscribe( t => this.nav.push(TeamHomePage, favorite.team));
     }
 
     ionViewDidEnter(){
+        // TODO:  
         this.userSettings.getAllFavorites()
         .then( favorites => {
              this.favorites = favorites;
